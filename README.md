@@ -1,5 +1,7 @@
 # TranslateTUI
 
+![Screenshot](./assets/screenshot.png)
+
 ## Development
 
 To install dependencies:
