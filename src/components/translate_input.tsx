@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { TranslateText } from "../models/translate_text";
 import { apiTranslate } from "../api/trasnlate";
 import { geminiTrasnlate } from "../api/gemini";
+import { TextAttributes } from "@opentui/core";
 
 const DIRECT_TRASNLATION = process.env.TRANSLATETUI_DIRECT == "1";
 
@@ -10,6 +11,13 @@ export const TranslateInput = () => {
 
     const [inputText, setInputText] = useState('');
     const [translates, setTranslates] = useState<TranslateText[]>([]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTranslates(prev => prev.map((item) => item))
+        }, 250);
+        return () => clearInterval(interval);
+    }, []);
 
     const translate = async (translateText: TranslateText) => {
         try {
@@ -65,7 +73,10 @@ export const TranslateInput = () => {
                             {!translateText.error && translateText.translated && (
                                 <text fg="#00ff00">{translateText.translated}</text>
                             )}
-                            <text/>
+                            {!translateText.error && !translateText.translated && (
+                                <text attributes={TextAttributes.DIM}>{'.'.repeat(Math.floor(Date.now() / 1000) % 4 + 1)}</text>
+                            )}
+                            <text />
                         </>
                     ))}
                 </scrollbox>

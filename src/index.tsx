@@ -5,9 +5,8 @@ import { TranslateInput } from "./components/translate_input";
 function App() {
     const Title = "Translate TUI";
     const Description = "A simple terminal-based translator"
-    const bg = "#111111";
     return (
-        <box backgroundColor={bg} width="100%" height="100%">
+        <box backgroundColor="#111111" width="100%" height="100%">
             <box height="25%" alignItems="center" justifyContent="flex-end" flexGrow={1} marginBottom={5}>
                 <box justifyContent="center" alignItems="center">
                     <ascii-font font="tiny" text={Title} />
