@@ -10,7 +10,7 @@ const gemini = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
-export const geminiTrasnlate = async (text: string) => {
+export const geminiTranslate = async (text: string) => {
     const response = await gemini.models.generateContent({
         model: GEMINI_MODEL,
         config: {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import type { TranslateText } from "../models/translate_text";
-import { apiTranslate } from "../api/trasnlate";
-import { geminiTrasnlate } from "../api/gemini";
+import { apiTranslate } from "../api/translate";
+import { geminiTranslate } from "../api/gemini";
 import { TextAttributes } from "@opentui/core";
 
-const DIRECT_TRASNLATION = process.env.TRANSLATETUI_DIRECT == "1";
+const DIRECT_TRANSLATION = process.env.TRANSLATETUI_DIRECT == "1";
 
 export const TranslateInput = () => {
     const TEXT_COLOR = "#00ffff";
@@ -21,8 +21,8 @@ export const TranslateInput = () => {
 
     const translate = async (translateText: TranslateText) => {
         try {
-            if (DIRECT_TRASNLATION) {
-                translateText.translated = await geminiTrasnlate(translateText.original);
+            if (DIRECT_TRANSLATION) {
+                translateText.translated = await geminiTranslate(translateText.original);
             } else {
                 translateText.translated = await apiTranslate(translateText.original) || undefined;
             }
