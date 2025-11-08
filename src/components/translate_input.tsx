@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { TranslateText } from "../models/translate_text";
+import { apiTranslate } from "../api/trasnlate";
 
 export const TranslateInput = () => {
     const TEXT_COLOR = "#00ffff";
@@ -7,16 +8,30 @@ export const TranslateInput = () => {
     const [inputText, setInputText] = useState('');
     const [translates, setTranslates] = useState<TranslateText[]>([]);
 
-    const onSubmit = () => {
-        if (inputText === '') {
-            return;
+    const translate = async(text: string) => {
+        var translatedText = null;
+        var err = undefined;
+        try {
+            translatedText = await apiTranslate(text);
+        } catch (e) {
+            if (e instanceof Error) {
+                err = e.message;
+            } else {
+                err = "エラーが発生しました。";
+            }
         }
-        const err = Math.random() > 0.7 ? "エラーが発生しました" : undefined;
         setTranslates([...translates, {
-            original: inputText,
-            translated: "こんにちは",
+            original: text,
+            translated: translatedText || undefined,
             error: err,
         }])
+    }
+
+    const onSubmit = () => {
+        if (inputText === '') return;
+
+        translate(inputText);
+
         setInputText('');
     }
     return (
