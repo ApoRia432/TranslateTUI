@@ -1,6 +1,9 @@
 import { useState } from "react"
 import type { TranslateText } from "../models/translate_text";
 import { apiTranslate } from "../api/trasnlate";
+import { geminiTrasnlate } from "../api/gemini";
+
+const DIRECT_TRASNLATION = process.env.TRANSLATETUI_DIRECT == "1";
 
 export const TranslateInput = () => {
     const TEXT_COLOR = "#00ffff";
@@ -8,29 +11,36 @@ export const TranslateInput = () => {
     const [inputText, setInputText] = useState('');
     const [translates, setTranslates] = useState<TranslateText[]>([]);
 
-    const translate = async(text: string) => {
-        var translatedText = null;
-        var err = undefined;
+    const translate = async (translateText: TranslateText) => {
         try {
-            translatedText = await apiTranslate(text);
+            if (DIRECT_TRASNLATION) {
+                translateText.translated = await geminiTrasnlate(translateText.original);
+            } else {
+                translateText.translated = await apiTranslate(translateText.original) || undefined;
+            }
         } catch (e) {
             if (e instanceof Error) {
-                err = e.message;
+                translateText.error = e.message;
             } else {
-                err = "エラーが発生しました。";
+                translateText.error = "エラーが発生しました。";
             }
         }
-        setTranslates([...translates, {
-            original: text,
-            translated: translatedText || undefined,
-            error: err,
-        }])
+        setTranslates(prev =>
+            prev.map(item =>
+                item.id === translateText.id ? translateText : item
+            )
+        )
     }
 
     const onSubmit = () => {
         if (inputText === '') return;
 
-        translate(inputText);
+        const translateText: TranslateText = {
+            id: crypto.randomUUID(),
+            original: inputText,
+        };
+        setTranslates([...translates, translateText]);
+        translate(translateText);
 
         setInputText('');
     }
@@ -47,7 +57,7 @@ export const TranslateInput = () => {
                     padding={1}
                 >
                     {translates.map((translateText) => (
-                        <box width="100%">
+                        <>
                             <text>You: {translateText.original}</text>
                             {translateText.error && (
                                 <text fg="#ff0000">{translateText.error}</text>
@@ -55,13 +65,13 @@ export const TranslateInput = () => {
                             {!translateText.error && translateText.translated && (
                                 <text fg="#00ff00">{translateText.translated}</text>
                             )}
-                            <text />
-                        </box>
+                            <text/>
+                        </>
                     ))}
                 </scrollbox>
             )}
             <input
-                placeholder="Type text to translate..."
+                placeholder="Enter text to translate..."
                 textColor={TEXT_COLOR}
                 height={2}
                 width="90%"
@@ -71,6 +81,7 @@ export const TranslateInput = () => {
                 value={inputText}
                 onInput={setInputText}
                 onSubmit={onSubmit}
+                onPaste={(event) => setInputText(event.text)}
             />
         </box>
     )

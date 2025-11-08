@@ -4,7 +4,7 @@ import { TranslateInput } from "./components/translate_input";
 
 function App() {
     const Title = "Translate TUI";
-    const Description = "AI Translator terminal user interface"
+    const Description = "A simple terminal-based translator"
     const bg = "#111111";
     return (
         <box backgroundColor={bg} width="100%" height="100%">
