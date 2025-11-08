@@ -17,5 +17,5 @@ bun dev
 To compile:
 
 ```bash
-bun build --compile src/index.ts --outfile TranslateTUI
+bun build --compile src/index.tsx --outfile translateTui
 ```
